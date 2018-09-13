@@ -9,20 +9,20 @@ const configure = require('../../configure')
  *修改页面标题
  * @param {string} [title] --> 默认为'OTCMAKER'
  * */
-export const $title = function (title) {
+export const $title = function (title?: any): void {
   title = title || 'OTCMAKER'
   window.document.title = title
 }
 
-export const $getDateStr = function (value) {
-  const getNumStr = (value) => {
+export const $getDateStr = function (value: number): string {
+  const getNumStr = (tempValue: number) => {
     if (+value > 9) {
-      return '' + value
+      return '' + tempValue
     } else {
-      return '0' + value
+      return '0' + tempValue
     }
   }
-  const tempDate = new Date(value)
+  const tempDate: Date = new Date(value)
   return getNumStr(tempDate.getFullYear()) + '/' + getNumStr(tempDate.getMonth() + 1) + '/' + getNumStr(tempDate.getDate()) + ' ' + getNumStr(tempDate.getHours()) + ':' + getNumStr(tempDate.getMinutes()) + ':' + getNumStr(tempDate.getSeconds())
 }
 /**
@@ -30,7 +30,7 @@ export const $getDateStr = function (value) {
  *
  * @return {string} --> like 'en-US', 'zh-CN', 'zh-TW', 'zh-HK'
  * */
-export const $getLanguage = function () {
+export const $getLanguage = function (): string {
   const currentLanguage = localStorage.getItem('language')
   if (currentLanguage) {
     return currentLanguage
@@ -48,7 +48,7 @@ export const $getLanguage = function () {
 /**
  * 获取语言供接口使用(统一 'zh-TW' 与 'zh-HK'，非中文统一为 'en')
  * */
-export const $getAxiosLanguage = function () {
+export const $getAxiosLanguage = function (): string {
   let ln = ''
   const currentLanguage = localStorage.getItem('language')
   if (currentLanguage) {
@@ -74,7 +74,7 @@ export const $getAxiosLanguage = function () {
  *
  * return {index} number
  * */
-export const $getLanguageIndex = function () {
+export const $getLanguageIndex = function (): number{
   let index = 0
   for (let i = 0; i < languageDataList.length; i++) {
     if (languageDataList[i].language === (localStorage.getItem('language') || configure.DEFAULT_LANGUAGE)) {
@@ -84,45 +84,11 @@ export const $getLanguageIndex = function () {
   return index
 }
 
-export const uuid = function (len, radix) {
-  let chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('')
-  let uuid = []
-  let i
-  radix = radix || chars.length
-
-  if (len) {
-    // Compact form
-    for (i = 0; i < len; i++) uuid[i] = chars[0 | Math.random() * radix]
-  } else {
-    // rfc4122, version 4 form
-    let r
-
-    // rfc4122 requires these characters
-    uuid[8] = uuid[13] = uuid[18] = uuid[23] = '-'
-    uuid[14] = '4'
-
-    // Fill in random data.  At i==19 set the high bits of clock sequence as
-    // per rfc4122, sec. 4.1.5
-    for (i = 0; i < 36; i++) {
-      if (!uuid[i]) {
-        r = 0 | Math.random() * 16
-        uuid[i] = chars[(i === 19) ? (r & 0x3) | 0x8 : r]
-      }
-    }
-  }
-
-  return uuid.join('')
-}
-
-export const $getNicknameByHash = function (str) {
-  return 'OTCMAKER_' + hexSha1(str + new Date().getTime())
-}
-
 /**
  * 使用BigNum来截取和显示小数
  *
  * **/
-export const $fixDecimalAuto = function (value, currency) {
+export const $fixDecimalAuto = function (value: string | number, currency: string): number {
   if (currency) {
     if (store.state.code.payable.indexOf(currency) > -1) {
       return $fixDecimalsLegal(+value)
@@ -137,25 +103,25 @@ export const $fixDecimalAuto = function (value, currency) {
 /**
  * 资产默认位数
  */
-export const $fixDecimalsAsset = function (value) {
+export const $fixDecimalsAsset = function (value: string | number): number {
   return $fixDecimal(value, configure.CONF_DECIMAL_ASSET)
 }
 /**
  * 数字币基本位数
  */
-export const $fixDecimalsBase = function (value) {
+export const $fixDecimalsBase = function (value: string | number): number {
   return $fixDecimal(value, configure.CONF_DECIMAL_BASE)
 }
 /**
  * 法币显示位数
  */
-export const $fixDecimalsLegal = function (value) {
+export const $fixDecimalsLegal = function (value: string | number): number {
   return $fixDecimal(value, configure.CONF_DECIMAL_LEGAL)
 }
 /**
  * 设置BigNum的全局参数
  */
-export const $fixDecimal = function (value, limit) {
+export const $fixDecimal = function (value: string | number, limit: number): number {
   let tempLimit = +limit
   let tempValue = +value
   if (tempValue > 0) {
@@ -182,7 +148,7 @@ export const $fixDecimal = function (value, limit) {
 /**
  * 加法（解决精度问题）
  */
-export const $plus = function (...args) {
+export const $plus = function (...args: number[]): number {
   if (args.length !== 2) {
     throw Error('Must set two params')
   }
@@ -193,7 +159,7 @@ export const $plus = function (...args) {
 /**
  * 减法（解决精度问题）
  */
-export const $minus = function (...args) {
+export const $minus = function (...args: number[]): number {
   if (args.length !== 2) {
     throw Error('Must set two params')
   }
@@ -204,7 +170,7 @@ export const $minus = function (...args) {
 /**
  * 乘法（解决精度问题）
  */
-export const $multipliedBy = function (...args) {
+export const $multipliedBy = function (...args: number[]): number {
   if (args.length !== 2) {
     throw Error('Must set two params')
   }
@@ -215,7 +181,7 @@ export const $multipliedBy = function (...args) {
 /**
  * 除法（解决精度问题）
  */
-export const $dividedBy = function (...args) {
+export const $dividedBy = function (...args: number[]): number {
   if (args.length !== 2) {
     throw Error('Must set two params')
   }
@@ -228,12 +194,12 @@ export const $dividedBy = function (...args) {
  * @description 光标设置到节点的末尾
  * @param {element} 节点
  */
-export function $setCursorPosition (el) {
-  el.focus()
-  const range = document.createRange()
-  range.selectNodeContents(el)
-  range.collapse(false)
-  const sel = window.getSelection()
-  sel.removeAllRanges()
-  sel.addRange(range)
-}
+// export function $setCursorPosition(el: Element) {
+//   el.focus()
+//   const range = document.createRange()
+//   range.selectNodeContents(el)
+//   range.collapse(false)
+//   const sel = window.getSelection()
+//   sel.removeAllRanges()
+//   sel.addRange(range)
+// }

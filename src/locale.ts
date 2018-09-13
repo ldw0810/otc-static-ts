@@ -1,8 +1,10 @@
+import {LanguageData} from './typings/globle'
+
 const zhCN = require('./assets/i18n/zh-CN.json')
 const zhHK = require('./assets/i18n/zh-HK.json')
 const enUS = require('./assets/i18n/en-US.json')
 
-export default [
+const languageDataList: LanguageData[] = [
   {
     language: 'zh-CN',
     name: '简体中文',
@@ -19,3 +21,4 @@ export default [
     data: enUS
   }
 ]
+export default languageDataList

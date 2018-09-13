@@ -2,7 +2,7 @@ import axios from 'axios'
 import store from '../store'
 import router from '../router'
 import languageDataList from '../locale'
-import {$getLanguageIndex} from '../utils'
+import {$getLanguageIndex} from './index'
 import {Toast} from 'mint-ui'
 
 const configure = require('../../configure')

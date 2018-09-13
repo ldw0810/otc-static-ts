@@ -21,9 +21,9 @@
     background url("../../assets/images/page/Img-Error.svg") no-repeat center
     background-size cover
 
-  .message {
+  .message
     @extend .flexColumnCenter
-    &-text {
+    &-text
       margin-top 50vh
       line-height: 42px;
       font-size: 36px;
@@ -31,8 +31,7 @@
       letter-spacing: 0;
       margin-bottom: 35px;
       text-align: center;
-    }
-    &-btn {
+    &-btn
       @extend .flexColumnCenter
       margin-top 20vh
       appearance: none;
@@ -47,6 +46,10 @@
       color: #333333;
       line-height: 21px;
       cursor pointer
-    }
-  }
+
+      &:focus,
+      &:active,
+      &:hover
+        background #666
+        color #fff
 </style>

@@ -21,9 +21,9 @@
     background url("../../assets/images/page/Img-404.svg") no-repeat center
     background-size cover
 
-  .message {
+  .message
     @extend .flexColumnCenter
-    &-text {
+    &-text
       margin-top 50vh
       line-height: 42px;
       font-size: 36px;
@@ -31,16 +31,13 @@
       letter-spacing: 0;
       margin-bottom: 35px;
       text-align: center;
-    }
-    &-btn {
+    &-btn
+      @extend .flexColumnCenter
       margin-top 20vh
       appearance: none;
       padding-left: 30px;
       padding-right: 30px;
       height: 44px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
       background: #ffffff;
       border: 1px solid rgba(0, 0, 0, 0.1);
       box-shadow: 0 5px 5px 0 rgba(0, 0, 0, 0.03);
@@ -49,6 +46,10 @@
       color: #333333;
       line-height: 21px;
       cursor pointer
-    }
-  }
+
+      &:focus,
+      &:active,
+      &:hover
+        background #666
+        color #fff
 </style>
