@@ -1,5 +1,5 @@
 <template lang="pug">
-  .container
+  .appPage
     .message
       .message-text {{$t('public.not_found')}}
       .message-btn(@click="goHome") {{$t('public.return_home')}}
@@ -8,32 +8,23 @@
 <script lang="ts">
   import Vue from 'vue'
   import Component from 'vue-class-component'
-  import util from '@/libs/util'
 
   @Component
   export default class notFound extends Vue {
-    msg: string = 'Welcome to Your Vue.js App'
-
-    created () {
-      util.title(this.$t('public.not_found'))
+    goHome (): void {
+      this.$router.push('/')
     }
   }
 </script>
-<style lang='scss' scoped>
-  .container {
-    background: url("~images/Img-404.svg") no-repeat center;
-    background-size: cover;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+<style lang='stylus' scoped>
+  .appPage
+    background url("../../assets/images/page/Img-404.svg") no-repeat center
+    background-size cover
 
   .message {
-    margin-top: 5%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    @extend .flexColumnCenter
     &-text {
+      margin-top 50vh
       line-height: 42px;
       font-size: 36px;
       color: #ffffff;
@@ -42,6 +33,7 @@
       text-align: center;
     }
     &-btn {
+      margin-top 20vh
       appearance: none;
       padding-left: 30px;
       padding-right: 30px;
@@ -56,6 +48,7 @@
       font-size: 16px;
       color: #333333;
       line-height: 21px;
+      cursor pointer
     }
   }
 </style>
