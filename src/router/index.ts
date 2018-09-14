@@ -8,18 +8,18 @@ let languageData: (LanguageData | undefined) = languageDataList.find(
   item => item.language === $getLanguage()
 )
 
-const HelloWorld: AsyncComponent = (): any => import('../components/HelloWorld.vue')
 const page: RouterPath = {
   notFound: (): any => import('../components/page/notFound.vue'),
-  error: (): any => import('../components/page/error.vue')
+  error: (): any => import('../components/page/error.vue'),
+  home: (): any => import('../components/page/home.vue'),
 }
 Vue.use(Router)
 
 const routes: RouteConfig[] = [
   {
     path: '/',
-    name: 'HelloWorld',
-    component: HelloWorld
+    name: 'home',
+    component: page.home
   },
   {
     path: '/error',

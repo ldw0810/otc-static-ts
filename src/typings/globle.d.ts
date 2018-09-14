@@ -17,3 +17,4 @@ interface LanguageData {
   name: string,
   data: I18nData
 }
+
