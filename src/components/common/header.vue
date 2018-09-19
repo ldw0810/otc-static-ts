@@ -15,7 +15,7 @@
                 DropdownItem(:class="{'active': childItem.index === header_index}" v-for='(childItem, i) in item.children' :key='i')
                   a(@click='goMenu(childItem)') {{childItem.title}}
       nav(class="header-frozen" v-else)
-        .header-frozen-text {{$t('user.user_frozen')}}
+        .header-frozen-text {{$i18n.translate('user.user_frozen')}}
       nav(class='header-nav header-login' v-if='!userToken')
         ul(class='header-navbar')
           li(class='header-navbar-item' :class="{'active': item.index === header_index}" v-for='(item, index) in logins' :key='index')
@@ -38,35 +38,35 @@
               Poptip(trigger="hover" placement="bottom" @on-popper-show="getAssetData" @on-popper-hide="getAssetDataCancel")
                 .header-navbar-item-wrapper(@click='goMenu(item)')
                   i(class='header-navbar-item-icon header-navbar-item-icon-prepend icon-dollar')
-                  a(class='header-navbar-item-link' href="javascript:void(0)") {{$t('public.asset')}}
+                  a(class='header-navbar-item-link' href="javascript:void(0)") {{$i18n.translate('public.asset')}}
                   Icon(class='header-navbar-item-icon header-navbar-item-icon-append' type="arrow-down-b")
                 .assets(slot='content')
                   .assets-inner
                     .assets-inner-list
                       template(v-for='(childItem, i) in item.children')
                         .assets-item(v-if='i === 0' :key='i')
-                          header(class='assets.header') {{$t("public.type")}}
+                          header(class='assets.header') {{$i18n.translate('public.type')}}
                           article(class='assets-content')
                             ul
-                              li(class='assets-list-item' v-for="(item, index) in userInfo.valid_account" :key="index") {{$t("public['" + item.currency + "']")}}
+                              li(class='assets-list-item' v-for="(item, index) in userInfo.valid_account" :key="index") {{$i18n.translate('public[\'' + item.currency + '\']')}}
                         .assets-item(v-if='i === 1' :key='i')
-                          header(class='assets.header') {{$t("public.balance")}}
+                          header(class='assets.header') {{$i18n.translate('public.balance')}}
                           article(class='assets-content')
                             ul
                               li(class='assets-list-item' v-for="(item, index) in userInfo.valid_account" :key="index") {{item.balance | fix_decimals_assets}}
                         .assets-item(v-if='i === 2' :key='i')
-                          header(class='assets.header') {{$t("public.locked")}}
+                          header(class='assets.header') {{$i18n.translate('public.locked')}}
                           article(class='assets-content')
                             ul
                               li(class='assets-list-item' v-for="(item, index) in userInfo.valid_account" :key="index") {{item.locked | fix_decimals_assets}}
                     .assets-inner-footer
                       template(v-for='(childItem, i) in item.children')
                         aside(class='assets-footer' v-if='i === 0' :key='i')
-                          i-button(class='assets-btn' @click="goMenu(childItem)") {{$t("public.recharge")}}
+                          i-button(class='assets-btn' @click="goMenu(childItem)") {{$i18n.translate('public.recharge')}}
                         aside(class='assets-footer' v-if='i === 1' :key='i')
-                          i-button(class='assets-btn' @click="goMenu(childItem)") {{$t("public.withdraw")}}
+                          i-button(class='assets-btn' @click="goMenu(childItem)") {{$i18n.translate("public.withdraw")}}
                         aside(class='assets-footer' v-if='i === 2' :key='i')
-                          i-button(class='assets-btn' type='primary' @click="goMenu(childItem)") {{$t("public.assetInfo")}}
+                          i-button(class='assets-btn' type='primary' @click="goMenu(childItem)") {{$i18n.translate("public.assetInfo")}}
             li(class='header-navbar-item' :key='index' :class="{'active': Array.isArray(item.index) && item.index.indexOf(header_index) > -1 }" v-if='index === 2')
               Dropdown
                 .header-navbar-item-wrapper(@click='goMenu(item)')
@@ -81,268 +81,252 @@
                       DropdownItem(:class="{'active': childItem.index === header_index}" :key='i')
                         a(@click='goMenu(childItem)') {{childItem.title}}
 </template>
-<script>
-  import isFunction from 'lodash/isFunction'
-import {CONF_DIGITAL_CURRENCY_LIST} from '../config/config'
+<script lang="ts">
+  import Vue from 'vue'
+  import {GlobeType} from '../../typings/globe'
+  import {StoreType} from '../../typings/store'
+  import {Watch} from 'vue-property-decorator'
+  import { State } from 'vuex-class'
 
-export default {
-    name: 'headerBar',
-    data () {
-      return {
-        assetLoading: false,
-        menus: [
+export default class headerBar extends Vue {
+    @State userInfo: StoreType.userInfo
+    @State userToken: string
+    @State code: StoreType.code
+
+    assetLoading: boolean = false
+    menus: GlobeType.headerBarMenu[] = [{
+      title: this.$i18n.translate('public.homePage', {}),
+      url: '/',
+      index: 0,
+      children: []
+    }]
+    logins: GlobeType.headerBarMenu[] = [
+      {
+        title: this.$i18n.translate('public.register', {}),
+        url: '/user/register',
+        index: 5,
+        children: []
+      },
+      {
+        title: '|',
+        url: '',
+        children: []
+      },
+      {
+        title: this.$i18n.translate('public.login', {}),
+        url: '/user/login',
+        index: 6,
+        children: []
+      }
+    ]
+    users: GlobeType.headerBarMenu[] = [
+      {
+        title: this.$i18n.translate('public.order', {}),
+        url: '/myOrder',
+        index: 7,
+        children: [],
+        meta: {}
+      },
+      {
+        title: this.$i18n.translate('public.asset', {}),
+        url: '/asset',
+        index: 8,
+        children: [
           {
-            title: this.$t('public.homePage'),
-            url: '/',
-            index: 0,
-            children: []
-          }
-        ],
-        logins: [
-          {
-            title: this.$t('public.register'),
-            url: '/user/register',
-            index: 5,
-            children: []
-          },
-          {
-            title: '|',
-            url: '',
-            children: []
-          },
-          {
-            title: this.$t('public.login'),
-            url: '/user/login',
-            index: 6,
-            children: []
-          }
-        ],
-        user: [
-          {
-            title: this.$t('public.order'),
-            url: '/myOrder',
-            index: 7,
-            children: [],
-            meta: {}
-          },
-          {
-            title: this.$t('public.asset'),
+            title: this.$i18n.translate('public.type', {}),
             url: '/asset',
-            index: 8,
-            children: [
-              {
-                title: this.$t('public.type'),
-                url: '/asset',
-                query: {
-                  type: 0
-                }
-              },
-              {
-                title: this.$t('public.balance'),
-                url: '/asset',
-                query: {
-                  type: 1
-                }
-              },
-              {
-                title: this.$t('public.locked'),
-                url: '/asset',
-                query: {
-                  type: 0
-                }
-              }
-            ]
+            query: {
+              type: 0
+            }
           },
           {
-            title: '',
+            title: this.$i18n.translate('public.balance', {}),
+            url: '/asset',
+            query: {
+              type: 1
+            }
+          },
+          {
+            title: this.$i18n.translate('public.locked', {}),
+            url: '/asset',
+            query: {
+              type: 0
+            }
+          }
+        ]
+      },
+      {
+        title: '',
+        url: '/user/userCenter',
+        index: [91, 92],
+        visible: false,
+        children: [
+          {
+            title: this.$i18n.translate('public.userCenter', {}),
             url: '/user/userCenter',
-            index: [91, 92],
-            visible: false,
-            children: [
-              {
-                title: this.$t('public.userCenter'),
-                url: '/user/userCenter',
-                index: 91,
-                children: []
-              },
-              {
-                title: this.$t('public.myAd'),
-                url: '/myAd',
-                index: 92,
-                children: []
-              },
-              {
-                title: this.$t('public.logout'),
-                url: '',
-                action: () => {
-                  this.$store.commit('delToken')
-                  this.$goRefresh()
-                },
-                children: []
-              }
-            ]
+            index: 91,
+            children: []
+          },
+          {
+            title: this.$i18n.translate('public.myAd', {}),
+            url: '/myAd',
+            index: 92,
+            children: []
+          },
+          {
+            title: this.$i18n.translate('public.logout', {}),
+            url: '',
+            action: () => {
+              this.$store.commit('delToken')
+              this.$router.go(0)
+            },
+            children: []
           }
         ]
       }
-    },
-    computed: {
-      device () {
-        return this.$store.state.device
-      },
-      userToken () {
-        return this.$store.state.userToken
-      },
-      userInfo () {
-        return this.$store.state.userInfo
-      },
-      nickname () {
-        return this.userInfo.nickname || window.localStorage.getItem('nickname')
-      },
-      soft_disabled () {
-        return this.$store.state.userInfo.soft_disabled
-      },
-      currencyList () {
-        return this.$store.state.code.sellable
-      },
-      header_index () {
-        return this.$store.state.header_index
-      },
-      ajax_source () {
-        return this.$store.state.ajax_source.me
-      },
-      code () {
-        return this.$store.state.code
-      },
-      timeout: {
-        set (val) {
-          this.$store.state.timeout.chat = val
-        },
-        get () {
-          return this.$store.state.timeout.notice
-        }
-      }
-    },
-    watch: {
-      code (val) {
-        val && this.init()
-      },
-      soft_disabled (val) {
-        if (val) {
-          this.timeout && clearTimeout(this.timeout)
-        } else {
-          this.timeout && clearTimeout(this.timeout)
-          this.timeout = setTimeout(this.getNotice, 30 * 1000)
-        }
-      }
-    },
-    methods: {
-      hideDropDown (item) {
-        item.visible = typeof item.visible !== 'undefined' ? false : undefined
-      },
-      handleMouseenter (item) {
-        item.visible = true
-      },
-      handleMouseleave (item) {
-        item.visible = false
-      },
-      getAssetData () {
-        this.assetLoading = true
-        this.$store.dispatch('ajax_me').then(res_me => {
-          this.assetLoading = false
-        }).catch(res => {
-          this.assetLoading = false
+    ]
+
+    get nickname () {
+      return this.userInfo.nickname || window.localStorage.getItem('nickname')
+    }
+
+    get ajaxSource () {
+      return this.$store.state.ajax_source
+    }
+
+    get code () {
+      return this.$store.state.code
+    }
+
+    get timeout () {
+      return this.$store.state.timeout.notice
+    }
+
+    @Watch('code')
+    watchCode (val) {
+      val && this.init()
+    }
+
+    @Watch('soft_disabled')
+    watchSoftDisabled (val) {
+      val && this.init()
+    }
+
+    hideDropDown (item) {
+      item.visible = typeof item.visible !== 'undefined' ? false : undefined
+    }
+
+    handleMouseenter (item) {
+      item.visible = true
+    }
+
+    handleMouseleave (item) {
+      item.visible = false
+    }
+
+    getAssetData () {
+      this.assetLoading = true
+      this.$store.dispatch('ajax_me').then(() => {
+        this.assetLoading = false
+      }).catch(res => {
+        this.assetLoading = false
+      })
+    }
+
+    getAssetDataCancel () {
+      this.ajaxSource && this.ajaxSource.cancel({cancel: 1})
+    }
+
+    getNotice () {
+      if (this.userToken) {
+        this.$store.dispatch('ajax_notice').then(res => {
+          if (res.data && +res.data.error === 0) {
+            this.$store.commit('userInfo_notice_setter', +res.data.notice)
+          } else {
+          }
+        }).catch(err => {
         })
-      },
-      getAssetDataCancel () {
-        this.ajax_source && this.ajax_source.cancel({cancel: 1})
-      },
-      getNotice () {
-        if (this.userToken) {
-          this.$store.dispatch('ajax_notice').then(res => {
-            if (res.data && +res.data.error === 0) {
-              this.$store.commit('userInfo_notice_setter', +res.data.notice)
-            } else {
-            }
-          }).catch(err => {
-          })
-        }
-        this.timeout && clearTimeout(this.timeout)
-        this.timeout = setTimeout(this.getNotice, 30 * 1000)
-      },
-      goMenu (item, index) {
-        if (item.action && isFunction(item.action)) {
-          item.action()
-        } else {
-          this.$goRouter(item.url, item.query)
-        }
-      },
-      init () {
-        const makeArray = type => {
-          const arr = {
-            buy: 11,
-            sell: 21,
-            ad: 30
-          }
-          return this.currencyList.map((item, index) => {
-            const obj = {}
-            obj.title = this.$t(`public.${item}`)
-            obj.url = `/${type}`
-            obj.index = +arr[type] + index
-            obj.query = {
-              currency: item
-            }
-            return obj
-          })
-        }
-        this.menus = [
-          {
-            title: this.$t('public.homePage'),
-            url: '/',
-            index: [0],
-            children: [],
-            visible: false
-          },
-          {
-            title: this.$t('public.buy'),
-            url: '/buy',
-            index: [11, 12],
-            visible: false,
-            children: makeArray('buy')
-          },
-          {
-            title: this.$t('public.sell'),
-            url: '/sell',
-            index: [21, 22],
-            visible: false,
-            children: makeArray('sell')
-          },
-          {
-            title: this.$t('public.ad'),
-            url: '/ad',
-            index: [30, 31],
-            visible: false,
-            children: makeArray('ad')
-          }
-          // {
-          //   title: this.$t("public.invite"),
-          //   url: "/invite",
-          //   index: [4],
-          //   visible: false,
-          //   children: []
-          // }
-        ]
       }
-    },
+      this.timeout && clearTimeout(this.timeout)
+      this.timeout = setTimeout(this.getNotice, 30 * 1000)
+    }
+
+    goMenu (item, index) {
+      if (item.action && isFunction(item.action)) {
+        item.action()
+      } else {
+        this.$goRouter(item.url, item.query)
+      }
+    }
+
+    init () {
+      const makeArray = type => {
+        const arr = {
+          buy: 11,
+          sell: 21,
+          ad: 30
+        }
+        return this.currencyList.map((item, index) => {
+          const obj = {}
+          obj.title = this.$i18n.translate(`public.${item}`, {})
+          obj.url = `/${type}`
+          obj.index = +arr[type] + index
+          obj.query = {
+            currency: item
+          }
+          return obj
+        })
+      }
+      this.menus = [
+        {
+          title: this.$i18n.translate('public.homePage', {}),
+          url: '/',
+          index: [0],
+          children: [],
+          visible: false
+        },
+        {
+          title: this.$i18n.translate('public.buy', {}),
+          url: '/buy',
+          index: [11, 12],
+          visible: false,
+          children: makeArray('buy')
+        },
+        {
+          title: this.$i18n.translate('public.sell', {}),
+          url: '/sell',
+          index: [21, 22],
+          visible: false,
+          children: makeArray('sell')
+        },
+        {
+          title: this.$i18n.translate('public.ad', {}),
+          url: '/ad',
+          index: [30, 31],
+          visible: false,
+          children: makeArray('ad')
+        }
+        // {
+        //   title: this.$i18n.translate("public.invite"),
+        //   url: "/invite",
+        //   index: [4],
+        //   visible: false,
+        //   children: []
+        // }
+      ]
+    }
+
     created () {
       this.init()
-    },
+    }
+
     destroyed () {
       this.timeout && clearTimeout(this.timeout)
     }
   }
 </script>
 
-<style lang="scss" scoped>
+<style lang="stylus" scoped>
   @import "~style/variables";
 
   .header-navbar-item {
@@ -352,7 +336,7 @@ export default {
     }
   }
 
-  $height: 76px;
+  $height = 76px;
   .header {
     width: 100%;
     min-width: 1200px;

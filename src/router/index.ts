@@ -1,6 +1,6 @@
 import Vue, {AsyncComponent} from 'vue'
 import Router, {RouteConfig} from 'vue-router'
-import {LanguageData, RouterPath} from '../typings/globle'
+import {LanguageData, RouterPath} from '../typings/globe'
 import languageDataList from '../locale'
 import {$getLanguage, $title} from '../utils'
 

@@ -1,10 +1,10 @@
 <template lang="pug">
   .appPage
     .mainLayer
-      <!--headerBar(id="header" class='g-shadow')-->
+      headerBar(id="header" class='g-shadow')
       transition(name="fade" mode="out-in")
         router-view(id="page")
-      footerBar(id="footer" :class="{'fixed': isFooter}")
+      <!--footerBar(id="footer" :class="{'fixed': isFooter}")-->
 </template>
 <script lang="ts">
   // todo popEmail弹窗待渲染
@@ -14,13 +14,14 @@
   //   <div slot="footer"></div>
   //   </Modal>
   import Vue from 'vue'
-  // import headerBar from '../../components/common/header.vue'
+  import headerBar from '../../components/common/header.vue'
   import {Component, Watch} from 'vue-property-decorator'
-  import footerBar from '../../components/common/footer.vue'
+  // import footerBar from '../../components/common/footer.vue'
   // import auth_email from '../../components/public/auth_email_pop'
 
   @Component({
-    footerBar
+    headerBar
+    // footerBar
   })
   export default class home extends Vue {
     isFooter: boolean = false
