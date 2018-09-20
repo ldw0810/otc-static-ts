@@ -32,7 +32,7 @@ declare namespace StoreType {
     email: string,
     phone_number: string,
     api_ln: string,
-    activated: true,
+    activated: boolean,
     invite: string,
     notice: number,
     valid_account: validAccount[],

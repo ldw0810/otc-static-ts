@@ -4,7 +4,7 @@
       .header-logo
         router-link(to='/')
           img(class='header-logo-asset' v-lazy="../../static/images/LOGO.png")
-      nav(class="header-nav" v-if='!soft_disabled')
+      nav(class="header-nav" v-if='!userInfo.soft_disabled')
         ul(class='header-navbar')
           li(class='header-navbar-item' :class="{'active': Array.isArray(item.index) && item.index.indexOf(+header_index) > -1 }" v-for='(item, index) in menus' :key='index')
             Dropdown(:ref='"menu-" + index')
@@ -64,9 +64,9 @@
                         aside(class='assets-footer' v-if='i === 0' :key='i')
                           i-button(class='assets-btn' @click="goMenu(childItem)") {{$i18n.translate('public.recharge')}}
                         aside(class='assets-footer' v-if='i === 1' :key='i')
-                          i-button(class='assets-btn' @click="goMenu(childItem)") {{$i18n.translate("public.withdraw")}}
+                          i-button(class='assets-btn' @click="goMenu(childItem)") {{$i18n.translate('public.withdraw')}}
                         aside(class='assets-footer' v-if='i === 2' :key='i')
-                          i-button(class='assets-btn' type='primary' @click="goMenu(childItem)") {{$i18n.translate("public.assetInfo")}}
+                          i-button(class='assets-btn' type='primary' @click="goMenu(childItem)") {{$i18n.translate('public.assetInfo')}}
             li(class='header-navbar-item' :key='index' :class="{'active': Array.isArray(item.index) && item.index.indexOf(header_index) > -1 }" v-if='index === 2')
               Dropdown
                 .header-navbar-item-wrapper(@click='goMenu(item)')
@@ -83,12 +83,11 @@
 </template>
 <script lang="ts">
   import Vue from 'vue'
-  import {GlobeType} from '../../typings/globe'
-  import {StoreType} from '../../typings/store'
   import {Watch} from 'vue-property-decorator'
-  import { State } from 'vuex-class'
+  import {State} from 'vuex-class'
 
-export default class headerBar extends Vue {
+  let timeout: number
+  export default class headerBar extends Vue {
     @State userInfo: StoreType.userInfo
     @State userToken: string
     @State code: StoreType.code
@@ -136,21 +135,21 @@ export default class headerBar extends Vue {
             title: this.$i18n.translate('public.type', {}),
             url: '/asset',
             query: {
-              type: 0
+              type: '0'
             }
           },
           {
             title: this.$i18n.translate('public.balance', {}),
             url: '/asset',
             query: {
-              type: 1
+              type: '1'
             }
           },
           {
             title: this.$i18n.translate('public.locked', {}),
             url: '/asset',
             query: {
-              type: 0
+              type: '0'
             }
           }
         ]
@@ -186,20 +185,12 @@ export default class headerBar extends Vue {
       }
     ]
 
-    get nickname () {
-      return this.userInfo.nickname || window.localStorage.getItem('nickname')
+    get nickname (): string {
+      return this.userInfo.nickname || window.localStorage.getItem('nickname') || ''
     }
 
     get ajaxSource () {
       return this.$store.state.ajax_source
-    }
-
-    get code () {
-      return this.$store.state.code
-    }
-
-    get timeout () {
-      return this.$store.state.timeout.notice
     }
 
     @Watch('code')
@@ -210,18 +201,6 @@ export default class headerBar extends Vue {
     @Watch('soft_disabled')
     watchSoftDisabled (val) {
       val && this.init()
-    }
-
-    hideDropDown (item) {
-      item.visible = typeof item.visible !== 'undefined' ? false : undefined
-    }
-
-    handleMouseenter (item) {
-      item.visible = true
-    }
-
-    handleMouseleave (item) {
-      item.visible = false
     }
 
     getAssetData () {
@@ -237,42 +216,46 @@ export default class headerBar extends Vue {
       this.ajaxSource && this.ajaxSource.cancel({cancel: 1})
     }
 
-    getNotice () {
+    getNotice (): void {
       if (this.userToken) {
         this.$store.dispatch('ajax_notice').then(res => {
           if (res.data && +res.data.error === 0) {
             this.$store.commit('userInfo_notice_setter', +res.data.notice)
           } else {
           }
-        }).catch(err => {
+        }).catch(() => {
         })
       }
-      this.timeout && clearTimeout(this.timeout)
-      this.timeout = setTimeout(this.getNotice, 30 * 1000)
+      timeout && window.clearTimeout(timeout)
+      timeout = window.setTimeout(this.getNotice, 30 * 1000)
     }
 
-    goMenu (item, index) {
-      if (item.action && isFunction(item.action)) {
+    goMenu (item: GlobeType.headerBarMenuChild) {
+      if (item.action) {
         item.action()
       } else {
-        this.$goRouter(item.url, item.query)
+        this.$router.push({
+          path: item.url,
+          query: item.query
+        })
       }
     }
 
-    init () {
+    init (): void {
       const makeArray = type => {
         const arr = {
           buy: 11,
           sell: 21,
           ad: 30
         }
-        return this.currencyList.map((item, index) => {
-          const obj = {}
-          obj.title = this.$i18n.translate(`public.${item}`, {})
-          obj.url = `/${type}`
-          obj.index = +arr[type] + index
-          obj.query = {
-            currency: item
+        return this.code.sellable.map((item, index) => {
+          let obj: GlobeType.headerBarMenu = {
+            title: this.$i18n.translate(`public.${item}`, {}),
+            url: `/${type}`,
+            index: +arr[type] + index,
+            query: {
+              currency: item
+            }
           }
           return obj
         })
@@ -316,12 +299,12 @@ export default class headerBar extends Vue {
       ]
     }
 
-    created () {
+    created (): void {
       this.init()
     }
 
-    destroyed () {
-      this.timeout && clearTimeout(this.timeout)
+    destroyed (): void {
+      timeout && window.clearTimeout(timeout)
     }
   }
 </script>

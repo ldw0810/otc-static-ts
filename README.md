@@ -72,7 +72,7 @@ import { State, Action } from "vuex-class";
 
 @Component
 export default class HelloWorld extends Vue {
-  // vuex state，访问方式为this.test, 等同于this.$store.state.test
+  // vuex state.ts，访问方式为this.test, 等同于this.$store.state.ts.test
   @State test: string;
   // vuex action, 调用方式为this.toggle(true | false), 等同于this.$store.dispatch('toggle', true | false)
   @Action toggle: (flag: boolean) => void;
@@ -110,7 +110,7 @@ export default {
     	return "test computed";
     },
     test() {
-    	return this.$store.state.test;
+    	return this.$store.state.ts.test;
     }
   },
   methods: {

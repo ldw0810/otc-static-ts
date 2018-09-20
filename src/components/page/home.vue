@@ -20,8 +20,7 @@
   // import auth_email from '../../components/public/auth_email_pop'
 
   @Component({
-    headerBar
-    // footerBar
+    components: {headerBar}
   })
   export default class home extends Vue {
     isFooter: boolean = false

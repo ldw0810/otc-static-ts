@@ -1,5 +1,3 @@
-import AsyncComponent from "vue";
-
 declare namespace GlobeType {
   export interface jsonData {
     [key: string]: string
@@ -7,10 +5,6 @@ declare namespace GlobeType {
 
   export interface I18nData {
     [key: string]: jsonData
-  }
-
-  export interface RouterPath {
-    [pageName: string]: AsyncComponent;
   }
 
   export interface LanguageData {
@@ -25,13 +19,15 @@ declare namespace GlobeType {
     index?: number | Array<number>,
     meta?: any,
     visible?: boolean,
-    children: headerBarMenuChild[]
+    children?: headerBarMenuChild[],
+    query?: jsonData
   }
 
   export interface headerBarMenuChild {
-    title?: string | undefined,
-    url?: string,
-    query?: object
+    title: string | undefined,
+    url: string,
+    action?: Function,
+    query?: jsonData
   }
 }
 

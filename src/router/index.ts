@@ -1,17 +1,17 @@
-import Vue, {AsyncComponent} from 'vue'
+import Vue from 'vue'
 import Router, {RouteConfig} from 'vue-router'
-import {LanguageData, RouterPath} from '../typings/globe'
 import languageDataList from '../locale'
 import {$getLanguage, $title} from '../utils'
+import {AsyncComponent, Component} from "vue/types/options";
 
-let languageData: (LanguageData | undefined) = languageDataList.find(
+let languageData: GlobeType.LanguageData = languageDataList.find(
   item => item.language === $getLanguage()
 )
 
-const page: RouterPath = {
+const page: { [key: string]: Component | AsyncComponent } = {
   notFound: (): any => import('../components/page/notFound.vue'),
   error: (): any => import('../components/page/error.vue'),
-  home: (): any => import('../components/page/home.vue'),
+  home: (): any => import('../components/page/home.vue')
 }
 Vue.use(Router)
 
@@ -46,7 +46,7 @@ const router: Router = new Router({
 })
 router.beforeEach((to, from, next) => {
   if (to.meta.error !== from.meta.error) {
-    if(languageData) {
+    if (languageData) {
       if (to.meta.error === 1) {
         $title(languageData.data.public.not_found)
       } else if (to.meta.error === 2) {
