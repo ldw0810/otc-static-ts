@@ -1,7 +1,7 @@
 interface StateType {
   userInfo: StoreType.userInfo,
   userToken: string,
-
+  code: StoreType.code
 }
 
 const state: StateType = {
@@ -32,7 +32,12 @@ const state: StateType = {
       account_display: '',
     },
   },
-  userToken: ''
+  userToken: '',
+  code: {
+    exable: [],
+    payable: [],
+    sellable: [],
+  }
 }
 
 export default state
