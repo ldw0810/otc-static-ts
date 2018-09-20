@@ -4,7 +4,7 @@ import languageDataList from '../locale'
 import {$getLanguage, $title} from '../utils'
 import {AsyncComponent, Component} from "vue/types/options";
 
-let languageData: GlobeType.LanguageData | undefined = languageDataList.find(
+let languageData: GlobeType.LanguageData = languageDataList.find(
   item => item.language === $getLanguage()
 )
 

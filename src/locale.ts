@@ -1,8 +1,10 @@
+import {GlobeState} from "./typings/globe";
+
 const zhCN = require('./assets/i18n/zh-CN.json')
 const zhHK = require('./assets/i18n/zh-HK.json')
 const enUS = require('./assets/i18n/en-US.json')
 
-const languageDataList: GlobeType.LanguageData[] = [
+const languageDataList: GlobeState.LanguageData[] = [
   {
     language: 'zh-CN',
     name: '简体中文',

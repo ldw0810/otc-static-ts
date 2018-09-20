@@ -189,13 +189,17 @@
       return this.userInfo.nickname || window.localStorage.getItem('nickname') || ''
     }
 
+    get ajaxSource () {
+      return this.$store.state.ajax_source
+    }
+
     @Watch('code')
-    watchCode (val: StoreType.code) {
+    watchCode (val) {
       val && this.init()
     }
 
     @Watch('soft_disabled')
-    watchSoftDisabled (val: boolean): void {
+    watchSoftDisabled (val) {
       val && this.init()
     }
 
@@ -238,7 +242,7 @@
     }
 
     init (): void {
-      const makeArray = (type: number) => {
+      const makeArray = type => {
         const arr = {
           buy: 11,
           sell: 21,
@@ -306,6 +310,8 @@
 </script>
 
 <style lang="stylus" scoped>
+  @import "~style/variables";
+
   .header-navbar-item {
     & /deep/ .ivu-select-dropdown {
       margin: 0;
@@ -468,6 +474,7 @@
             left: 5px;
             width: 80%;
             height: 1px;
+            left: 50%;
             transform: translateX(-50%);
             background-color: #e9edf1;
           }
