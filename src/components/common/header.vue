@@ -85,12 +85,17 @@
   import Vue from 'vue'
   import {Watch} from 'vue-property-decorator'
   import {State} from 'vuex-class'
+  import Component from 'vue-class-component'
 
   let timeout: number
+
+  @Component({
+    name: 'headerBar'
+  })
   export default class headerBar extends Vue {
-    @State userInfo: StoreType.userInfo
-    @State userToken: string
-    @State code: StoreType.code
+    @State('userInfo') userInfo: StoreType.userInfo
+    @State('userToken') userToken: string
+    @State('code') code: StoreType.code
 
     assetLoading: boolean = false
     menus: GlobeType.headerBarMenu[] = [{
@@ -194,12 +199,12 @@
     }
 
     @Watch('code')
-    watchCode (val) {
+    watchCode (val: StoreType.code) {
       val && this.init()
     }
 
     @Watch('soft_disabled')
-    watchSoftDisabled (val) {
+    watchSoftDisabled (val: boolean) {
       val && this.init()
     }
 
@@ -242,8 +247,8 @@
     }
 
     init (): void {
-      const makeArray = type => {
-        const arr = {
+      const makeArray = (type: string) => {
+        const arr: GlobeType.jsonDataNumber = {
           buy: 11,
           sell: 21,
           ad: 30

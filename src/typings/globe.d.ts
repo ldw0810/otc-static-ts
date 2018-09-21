@@ -3,6 +3,10 @@ declare namespace GlobeType {
     [key: string]: string
   }
 
+  export interface jsonDataNumber {
+    [key: string]: number
+  }
+
   export interface I18nData {
     [key: string]: jsonData
   }

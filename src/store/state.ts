@@ -1,9 +1,8 @@
 interface StateType {
   userInfo: StoreType.userInfo,
   userToken: string,
-
+  code: StoreType.code
 }
-
 const state: StateType = {
   userInfo: {
     id: '',
@@ -29,10 +28,14 @@ const state: StateType = {
       account: '',
       bank: '',
       bank_name: '',
-      account_display: '',
-    },
+      account_display: ''
+    }
   },
-  userToken: ''
+  userToken: '',
+  code: {
+    exable: [],
+    payable: [],
+    sellable: []
+  }
 }
-
 export default state
